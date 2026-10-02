@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse, Response
 
 import cv2
 import json
@@ -377,16 +377,11 @@ def parking_status():
 # ==================================================
 # PARKING IMAGE
 # ==================================================
-
 @app.get("/parking-image")
 def parking_image():
-
-    image = cv2.imread(
-        IMAGE_PATH
-    )
+    image = cv2.imread(IMAGE_PATH)
 
     if image is None:
-
         return {
             "error": "Parking image not found."
         }
@@ -399,21 +394,20 @@ def parking_image():
         occupancy
     ) = detect_frame(image)
 
-    output_path = (
-        "static/processed_parking.png"
-    )
-
-    cv2.imwrite(
-        output_path,
+    success, encoded = cv2.imencode(
+        ".png",
         image
     )
 
-    return FileResponse(
-        output_path,
-        media_type="image/png"
-    )
+    if not success:
+        return {
+            "error": "Could not process parking image."
+        }
 
-
+    return Response(
+    content=encoded.tobytes(),
+    media_type="image/png"
+)
 # ==================================================
 # VIDEO STATUS
 # ==================================================
