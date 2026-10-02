@@ -1,0 +1,2683 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ParkVision AI</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #071015;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        /* =========================
+           MAIN CONTAINER
+        ========================= */
+
+        .container {
+            width: 92%;
+            max-width: 1400px;
+            margin: auto;
+            padding-bottom: 100px;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 28px 0;
+            border-bottom: 1px solid #17252c;
+            margin-bottom: 30px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: #00e5a0;
+            color: #071015;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+        .brand-text h1 {
+            font-size: 23px;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-text p {
+            font-size: 12px;
+            color: #7e9199;
+            margin-top: 3px;
+        }
+
+        .online-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 14px;
+            border-radius: 30px;
+            border: 1px solid #1c3935;
+            background: #0b1b19;
+            color: #00e5a0;
+            font-size: 13px;
+        }
+
+        .online-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00e5a0;
+            box-shadow: 0 0 10px #00e5a0;
+        }
+
+        /* =========================
+           PAGE
+        ========================= */
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .page-title {
+            margin-bottom: 25px;
+        }
+
+        .page-title h2 {
+            font-size: 28px;
+            margin-bottom: 7px;
+        }
+
+        .page-title p {
+            color: #81939b;
+            font-size: 14px;
+        }
+
+        /* =========================
+           STAT CARDS
+        ========================= */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #0b161c;
+            border: 1px solid #17262d;
+            border-radius: 18px;
+            padding: 22px;
+            transition: 0.25s;
+        }
+
+        .stat-card:hover {
+            border-color: #27413f;
+            transform: translateY(-2px);
+        }
+
+        .stat-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-label {
+            color: #82949c;
+            font-size: 13px;
+        }
+
+        .stat-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: #11242a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .stat-value {
+            font-size: 31px;
+            font-weight: 700;
+            margin-top: 17px;
+        }
+
+        .green {
+            color: #00e5a0;
+        }
+
+        .red {
+            color: #ff5b65;
+        }
+
+        .blue {
+            color: #53b7ff;
+        }
+
+        /* =========================
+           DASHBOARD GRID
+        ========================= */
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 22px;
+            margin-bottom: 22px;
+        }
+
+        .panel {
+            background: #0b161c;
+            border: 1px solid #17262d;
+            border-radius: 20px;
+            padding: 22px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .panel-header h3 {
+            font-size: 17px;
+        }
+
+        .panel-header span {
+            color: #748891;
+            font-size: 12px;
+        }
+
+        /* =========================
+           CAMERA
+        ========================= */
+
+        .camera {
+            width: 100%;
+            height: 430px;
+            border-radius: 15px;
+            overflow: hidden;
+            background: #050b0e;
+            border: 1px solid #18282f;
+            position: relative;
+        }
+
+        .camera img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .camera-status {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            padding: 7px 11px;
+            border-radius: 8px;
+            background: rgba(5, 15, 18, 0.9);
+            border: 1px solid #284039;
+            color: #00e5a0;
+            font-size: 12px;
+        }
+        .camera-status::before {
+    content: "";
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin-right: 6px;
+    border-radius: 50%;
+    background: #00e5a0;
+    box-shadow: 0 0 8px #00e5a0;
+    animation: livePulse 1.5s infinite;
+}
+
+@keyframes livePulse {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.35;
+        transform: scale(0.75);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+        .camera-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 14px;
+            color: #71858d;
+            font-size: 12px;
+        }
+
+        /* =========================
+           OCCUPANCY PANEL
+        ========================= */
+
+        .occupancy-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 430px;
+        }
+
+        .occupancy-ring {
+            width: 205px;
+            height: 205px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: conic-gradient(
+                #00e5a0 0deg,
+                #00e5a0 252deg,
+                #17252c 252deg,
+                #17252c 360deg
+            );
+            position: relative;
+        }
+
+        .occupancy-ring::before {
+            content: "";
+            width: 160px;
+            height: 160px;
+            background: #0b161c;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .ring-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .ring-content strong {
+            font-size: 38px;
+            display: block;
+        }
+
+        .ring-content span {
+            color: #7e9199;
+            font-size: 12px;
+        }
+
+        .mini-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+            margin-top: 28px;
+        }
+
+        .mini-card {
+            border: 1px solid #17262d;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            background: #091319;
+        }
+
+        .mini-card strong {
+            font-size: 22px;
+            display: block;
+        }
+
+        .mini-card span {
+            font-size: 11px;
+            color: #75878f;
+        }
+
+        /* =========================
+           INFO GRID
+        ========================= */
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .info-card {
+            padding: 17px;
+            border: 1px solid #17262d;
+            border-radius: 14px;
+            background: #0b161c;
+        }
+
+        .info-card span {
+            display: block;
+            color: #72868e;
+            font-size: 11px;
+            margin-bottom: 8px;
+        }
+
+        .info-card strong {
+            font-size: 14px;
+        }
+
+        /* =========================
+           ACTIVITY
+        ========================= */
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid #17262d;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-left {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .activity-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            background: #112128;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .activity-text strong {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .activity-text span {
+            font-size: 11px;
+            color: #72858d;
+        }
+
+        .activity-time {
+            font-size: 11px;
+            color: #65777e;
+        }
+
+        /* =========================
+           PARKING SLOTS
+        ========================= */
+
+        .slots-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 18px;
+        }
+
+        .slot-card {
+    border: 1px solid #17262d;
+    border-radius: 18px;
+    padding: 25px 18px;
+    text-align: center;
+    background: #0b161c;
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.slot-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    opacity: 0.8;
+}
+
+.slot-card:hover {
+    transform: translateY(-4px);
+}
+
+.slot-card.available {
+    border-color: #164b3c;
+    background: linear-gradient(
+        145deg,
+        #091b18,
+        #0b1719
+    );
+}
+
+.slot-card.available::before {
+    background: #00e5a0;
+}
+
+.slot-card.available:hover {
+    border-color: #00e5a0;
+    box-shadow: 0 8px 25px rgba(0, 229, 160, 0.08);
+}
+
+.slot-card.occupied {
+    border-color: #512b31;
+    background: linear-gradient(
+        145deg,
+        #1b0d11,
+        #160c10
+    );
+}
+
+.slot-card.occupied::before {
+    background: #ff5b65;
+}
+
+.slot-card.occupied:hover {
+    border-color: #ff5b65;
+    box-shadow: 0 8px 25px rgba(255, 91, 101, 0.08);
+}
+
+.slot-number {
+    font-size: 14px;
+    font-weight: bold;
+    color: #a8b7bc;
+    letter-spacing: 0.5px;
+}
+
+.slot-icon {
+    font-size: 30px;
+    margin: 18px 0 12px;
+    transition: transform 0.25s ease;
+}
+
+.slot-card:hover .slot-icon {
+    transform: scale(1.08);
+}
+
+.slot-status {
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 0.4px;
+}
+
+.slot-card.available .slot-status {
+    color: #00e5a0;
+}
+
+.slot-card.occupied .slot-status {
+    color: #ff5b65;
+}
+
+        /* =========================
+           ANALYTICS
+        ========================= */
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .analytics-card {
+            background: #0b161c;
+            border: 1px solid #17262d;
+            border-radius: 17px;
+            padding: 20px;
+        }
+
+        .analytics-card span {
+            color: #7a8c94;
+            font-size: 12px;
+        }
+
+        .analytics-card strong {
+            display: block;
+            font-size: 28px;
+            margin-top: 12px;
+        }
+
+        .chart-panel {
+            background: #0b161c;
+            border: 1px solid #17262d;
+            border-radius: 20px;
+            padding: 25px;
+        }
+
+        .chart {
+    height: 290px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 70px;
+    padding: 20px;
+    border-bottom: 1px solid #233139;
+    position: relative;
+    overflow: hidden;
+}
+
+.chart::before {
+    content: "";
+    position: absolute;
+    inset: 20px;
+    background:
+        repeating-linear-gradient(
+            to top,
+            transparent 0,
+            transparent 57px,
+            rgba(255, 255, 255, 0.035) 58px
+        );
+    pointer-events: none;
+}
+
+.bar-wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.bar {
+    width: 85px;
+    border-radius: 12px 12px 0 0;
+    min-height: 5px;
+    transition:
+        height 0.6s ease,
+        transform 0.25s ease;
+}
+
+.bar:hover {
+    transform: scaleX(1.04);
+}
+
+.occupied-bar {
+    background: linear-gradient(
+        to top,
+        #8f2933,
+        #ff5b65
+    );
+    box-shadow:
+        0 0 20px rgba(255, 91, 101, 0.12);
+}
+
+.available-bar {
+    background: linear-gradient(
+        to top,
+        #087d60,
+        #00e5a0
+    );
+    box-shadow:
+        0 0 20px rgba(0, 229, 160, 0.12);
+}
+
+.bar-label {
+    color: #9baab0;
+    font-size: 12px;
+}
+
+.chart-value {
+    font-size: 12px;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #899ba2;
+    font-size: 12px;
+}
+
+.legend-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+}
+
+        /* =========================
+           SYSTEM PAGE
+        ========================= */
+
+        .system-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .system-card {
+    background: linear-gradient(
+        145deg,
+        #0d1a21,
+        #0a1419
+    );
+    border: 1px solid #17262d;
+    border-radius: 18px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition:
+        border-color 0.25s ease,
+        transform 0.25s ease;
+}
+
+.system-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #00e5a0;
+    opacity: 0.7;
+}
+
+.system-card:hover {
+    transform: translateY(-2px);
+    border-color: #245044;
+}
+
+.system-card h3 {
+    margin-bottom: 20px;
+    font-size: 17px;
+    color: #e5eef1;
+}
+
+        .system-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid #17262d;
+        }
+
+        .system-row:last-child {
+            border-bottom: none;
+        }
+
+        .system-row span {
+            color: #7b8d95;
+            font-size: 13px;
+        }
+
+        .system-row strong {
+            font-size: 13px;
+        }
+
+        .status-good {
+            color: #00e5a0;
+        }
+
+        /* =========================
+           LOADING / ERROR
+        ========================= */
+
+        .loading {
+            text-align: center;
+            color: #80929a;
+            padding: 40px;
+        }
+
+        .error-message {
+            color: #ff727a;
+            text-align: center;
+            padding: 30px;
+            border: 1px solid #4b282d;
+            border-radius: 14px;
+            background: #1a0e11;
+        }
+
+        /* =========================
+           BOTTOM NAVIGATION
+        ========================= */
+
+        .bottom-nav {
+            position: fixed;
+            left: 50%;
+            bottom: 20px;
+            transform: translateX(-50%);
+            background: rgba(8, 18, 23, 0.96);
+            border: 1px solid #203139;
+            border-radius: 18px;
+            padding: 8px;
+            display: flex;
+            gap: 5px;
+            z-index: 100;
+            backdrop-filter: blur(15px);
+        }
+
+        .nav-btn {
+            border: none;
+            background: transparent;
+            color: #71848c;
+            padding: 11px 17px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: 0.2s;
+        }
+
+        .nav-btn:hover {
+            color: #ffffff;
+            background: #112027;
+        }
+
+        .nav-btn.active {
+            background: #00e5a0;
+            color: #071015;
+            font-weight: bold;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1000px) {
+
+            .stats-grid,
+            .analytics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .slots-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+        }
+
+        @media (max-width: 650px) {
+
+            .container {
+                width: 94%;
+            }
+
+            header {
+                align-items: flex-start;
+            }
+
+            .online-status {
+                font-size: 11px;
+                padding: 7px 10px;
+            }
+
+            .brand-text h1 {
+                font-size: 19px;
+            }
+
+            .page-title h2 {
+                font-size: 23px;
+            }
+
+            .stats-grid,
+            .analytics-grid,
+            .info-grid,
+            .system-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .slots-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .camera {
+                height: 280px;
+            }
+
+            .occupancy-box {
+                min-height: auto;
+                padding: 25px 0;
+            }
+
+            .chart {
+                gap: 35px;
+            }
+
+            .bar {
+                width: 60px;
+            }
+
+            .bottom-nav {
+                width: 94%;
+                justify-content: space-around;
+            }
+
+            .nav-btn {
+                padding: 10px 8px;
+                font-size: 10px;
+            }
+
+        }
+        @media (max-width: 420px) {
+
+    .container {
+        width: 92%;
+    }
+
+    .brand-text h1 {
+        font-size: 17px;
+    }
+
+    .page-title h2 {
+        font-size: 21px;
+    }
+
+    .camera {
+        height: 230px;
+    }
+
+    .camera-status {
+        top: 10px;
+        left: 10px;
+        font-size: 10px;
+        padding: 6px 8px;
+    }
+
+    .camera-footer {
+        font-size: 10px;
+    }
+
+    .slot-card {
+        padding: 20px 12px;
+    }
+
+    .slot-icon {
+        font-size: 26px;
+        margin: 14px 0 10px;
+    }
+
+    .chart {
+        gap: 20px;
+        padding: 15px 5px;
+    }
+
+    .bar {
+        width: 48px;
+    }
+
+    .chart-value {
+        font-size: 10px;
+    }
+
+    .bottom-nav {
+        width: 96%;
+    }
+
+    .nav-btn {
+        padding: 9px 5px;
+        font-size: 9px;
+    }
+}
+    </style>
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <!-- =========================
+         HEADER
+    ========================= -->
+
+    <header>
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                P
+            </div>
+
+            <div class="brand-text">
+                <h1>ParkVision AI</h1>
+                <p>Smart Parking Detection System</p>
+            </div>
+
+        </div>
+
+
+        <div class="online-status">
+
+            <div class="online-dot"></div>
+
+            SYSTEM ONLINE
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================
+         DASHBOARD PAGE
+    ========================= -->
+
+    <section id="dashboardPage" class="page active">
+
+        <div class="page-title">
+
+            <h2>Parking Dashboard</h2>
+
+            <p>
+                Real-time computer vision monitoring of your parking area.
+            </p>
+
+        </div>
+
+
+        <!-- STAT CARDS -->
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <span class="stat-label">
+                        Total Spaces
+                    </span>
+
+                    <div class="stat-icon">
+                        🅿️
+                    </div>
+
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="totalSpaces"
+                >
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <span class="stat-label">
+                        Available
+                    </span>
+
+                    <div class="stat-icon">
+                        ✓
+                    </div>
+
+                </div>
+
+                <div
+                    class="stat-value green"
+                    id="availableSpaces"
+                >
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <span class="stat-label">
+                        Occupied
+                    </span>
+
+                    <div class="stat-icon">
+                        🚗
+                    </div>
+
+                </div>
+
+                <div
+                    class="stat-value red"
+                    id="occupiedSpaces"
+                >
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <span class="stat-label">
+                        Occupancy
+                    </span>
+
+                    <div class="stat-icon">
+                        %
+                    </div>
+
+                </div>
+
+                <div
+                    class="stat-value blue"
+                    id="occupancyPercentage"
+                >
+                    -
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CAMERA + OCCUPANCY -->
+
+        <div class="dashboard-grid">
+
+
+            <!-- CAMERA -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h3>
+                        Live Computer Vision Feed
+                    </h3>
+
+                    <span id="lastUpdate">
+                        Updating...
+                    </span>
+
+                </div>
+
+
+                <div class="camera">
+
+    <div class="camera-status">
+    Detection Active
+</div>
+<div class="camera-footer">
+    <span>OpenCV Vision Engine</span>
+    <span id="lastFrameStatus">Live Detection</span>
+</div>
+
+    <img
+        id="parkingImage"
+        src="/parking-image"
+        alt="Parking Detection"
+    >
+
+    <img
+        id="parkingVideo"
+        src="/parking-video-stream"
+        alt="Parking Video Detection"
+        style="display: none;"
+    >
+
+</div>
+
+<div style="
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+">
+
+    <button
+        onclick="showImageMode()"
+        id="imageModeButton"
+        style="
+            border: none;
+            padding: 9px 14px;
+            border-radius: 9px;
+            background: #00e5a0;
+            color: #071015;
+            cursor: pointer;
+            font-weight: bold;
+        "
+    >
+        Image Mode
+    </button>
+
+    <button
+        onclick="showVideoMode()"
+        id="videoModeButton"
+        style="
+            border: 1px solid #263840;
+            padding: 9px 14px;
+            border-radius: 9px;
+            background: #101d23;
+            color: #9aabb2;
+            cursor: pointer;
+        "
+    >
+        Video Mode
+    </button>
+
+</div>
+
+
+                <div class="camera-footer">
+
+                    <span>
+                        Source: parking_lot.png
+                    </span>
+
+                    <span>
+                        OpenCV Detection
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- OCCUPANCY -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h3>
+                        Occupancy Overview
+                    </h3>
+
+                    <span>
+                        Live
+                    </span>
+
+                </div>
+
+
+                <div class="occupancy-box">
+
+                    <div
+                        class="occupancy-ring"
+                        id="occupancyRing"
+                    >
+
+                        <div class="ring-content">
+
+                            <strong id="ringPercentage">
+                                -
+                            </strong>
+
+                            <span>
+                                Occupied
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="mini-stats">
+
+                        <div class="mini-card">
+
+                            <strong
+                                class="green"
+                                id="miniAvailable"
+                            >
+                                -
+                            </strong>
+
+                            <span>
+                                Available
+                            </span>
+
+                        </div>
+
+
+                        <div class="mini-card">
+
+                            <strong
+                                class="red"
+                                id="miniOccupied"
+                            >
+                                -
+                            </strong>
+
+                            <span>
+                                Occupied
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SYSTEM INFO -->
+
+        <div class="info-grid">
+
+            <div class="info-card">
+
+                <span>
+                    DETECTION ENGINE
+                </span>
+
+                <strong>
+                    OpenCV + NumPy
+                </strong>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <span>
+                    BACKEND
+                </span>
+
+                <strong>
+                    FastAPI + Uvicorn
+                </strong>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <span>
+                    CAMERA STATUS
+                </span>
+
+                <strong class="status-good">
+                    Connected
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- RECENT ACTIVITY -->
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <h3>
+                    Recent Parking Activity
+                </h3>
+
+                <span>
+                    Live Updates
+                </span>
+
+            </div>
+
+
+            <div
+                class="activity-list"
+                id="activityList"
+            >
+
+                <div class="loading">
+                    Loading activity...
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         PARKING SLOTS PAGE
+    ========================= -->
+
+    <section
+        id="slotsPage"
+        class="page"
+    >
+
+        <div class="page-title">
+
+            <h2>
+                Parking Slots
+            </h2>
+
+            <p>
+                Individual parking space detection status.
+            </p>
+
+        </div>
+
+
+        <div
+            class="slots-grid"
+            id="slotsGrid"
+        >
+
+            <div class="loading">
+                Loading parking slots...
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         ANALYTICS PAGE
+    ========================= -->
+
+    <section
+        id="analyticsPage"
+        class="page"
+    >
+
+        <div class="page-title">
+
+            <h2>
+                Parking Analytics
+            </h2>
+
+            <p>
+                Current parking utilization and detection statistics.
+            </p>
+
+        </div>
+
+
+        <div class="analytics-grid">
+
+
+            <div class="analytics-card">
+
+                <span>
+                    OCCUPANCY
+                </span>
+
+                <strong
+                    class="blue"
+                    id="analyticsOccupancy"
+                >
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="analytics-card">
+
+                <span>
+                    AVAILABLE
+                </span>
+
+                <strong
+                    class="green"
+                    id="analyticsAvailable"
+                >
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="analytics-card">
+
+                <span>
+                    OCCUPIED
+                </span>
+
+                <strong
+                    class="red"
+                    id="analyticsOccupied"
+                >
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="analytics-card">
+
+                <span>
+                    TOTAL SPACES
+                </span>
+
+                <strong id="analyticsTotal">
+                    -
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- CHART -->
+
+        <div class="chart-panel">
+
+            <div class="panel-header">
+
+                <h3>
+                    Occupancy Distribution
+                </h3>
+
+                <span>
+                    Current Detection
+                </span>
+
+            </div>
+
+
+            <div class="chart">
+
+
+                <div class="bar-wrapper">
+
+                    <div
+                        class="chart-value"
+                        id="occupiedChartValue"
+                    >
+                        -
+                    </div>
+
+                    <div
+                        class="bar occupied-bar"
+                        id="occupiedBar"
+                        style="height: 0px;"
+                    ></div>
+
+                    <div class="bar-label">
+                        Occupied
+                    </div>
+
+                </div>
+
+
+                <div class="bar-wrapper">
+
+                    <div
+                        class="chart-value"
+                        id="availableChartValue"
+                    >
+                        -
+                    </div>
+
+                    <div
+                        class="bar available-bar"
+                        id="availableBar"
+                        style="height: 0px;"
+                    ></div>
+
+                    <div class="bar-label">
+                        Available
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="chart-legend">
+
+                <div class="legend-item">
+
+                    <div
+                        class="legend-dot"
+                        style="background:#ff5b65;"
+                    ></div>
+
+                    Occupied
+
+                </div>
+
+
+                <div class="legend-item">
+
+                    <div
+                        class="legend-dot"
+                        style="background:#00e5a0;"
+                    ></div>
+
+                    Available
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         SYSTEM PAGE
+    ========================= -->
+
+    <section
+        id="systemPage"
+        class="page"
+    >
+
+        <div class="page-title">
+
+            <h2>
+                System
+            </h2>
+
+            <p>
+                ParkVision AI system information and status.
+            </p>
+
+        </div>
+
+
+        <div class="system-grid">
+
+
+            <!-- SYSTEM STATUS -->
+
+            <div class="system-card">
+
+                <h3>
+                    System Status
+                </h3>
+
+
+                <div class="system-row">
+
+                    <span>
+                        Application
+                    </span>
+
+                    <strong class="status-good">
+                        Online
+                    </strong>
+
+                </div>
+
+
+                <div class="system-row">
+
+                    <span>
+                        Backend
+                    </span>
+
+                    <strong class="status-good">
+                        FastAPI Running
+                    </strong>
+
+                </div>
+
+
+                <div class="system-row">
+
+                    <span>
+                        Detection Engine
+                    </span>
+
+                    <strong class="status-good">
+                        Active
+                    </strong>
+
+                </div>
+
+
+                <div class="system-row">
+
+                    <span>
+                        Camera
+                    </span>
+
+                    <strong class="status-good">
+                        Connected
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- TECHNOLOGY -->
+
+            <div class="system-card">
+
+                <h3>
+                    Technology Stack
+                </h3>
+
+
+                <div class="system-row">
+
+                    <span>
+                        Programming
+                    </span>
+
+                    <strong>
+                        Python
+                    </strong>
+
+                </div>
+
+
+                <div class="system-row">
+
+                    <span>
+                        Computer Vision
+                    </span>
+
+                    <strong>
+                        OpenCV
+                    </strong>
+
+                </div>
+
+
+                <div class="system-row">
+
+                    <span>
+                        Numerical Processing
+                    </span>
+
+                    <strong>
+                        NumPy
+                    </strong>
+
+                </div>
+
+
+                <div class="system-row">
+
+                    <span>
+                        API Framework
+                    </span>
+
+                    <strong>
+                        FastAPI
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- DETECTION CONFIGURATION -->
+
+            <div class="system-card">
+
+                <h3>
+                    Detection Configuration
+                </h3>
+
+
+                <div class="system-row">
+
+                    <span>
+                        Parking Spaces
+                    </span>
+
+                    <strong id="systemTotalSpaces">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="system-row">
+
+                    <span>
+                        Detection Method
+                    </span>
+
+                    <strong>
+                        Edge Density
+                    </strong>
+
+                </div>
+
+
+                <div class="system-row">
+
+                    <span>
+                        Processing
+                    </span>
+
+                    <strong>
+                        Real-time
+                    </strong>
+
+                </div>
+
+
+                <div class="system-row">
+
+                    <span>
+                        Refresh Interval
+                    </span>
+
+                    <strong>
+                        5 seconds
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- API -->
+
+            <div class="system-card">
+
+                <h3>
+                    Backend API
+                </h3>
+
+
+                <div class="system-row">
+
+                    <span>
+                        Status Endpoint
+                    </span>
+
+                    <strong>
+                        /parking-status
+                    </strong>
+
+                </div>
+
+
+                <div class="system-row">
+
+                    <span>
+                        Image Endpoint
+                    </span>
+
+                    <strong>
+                        /parking-image
+                    </strong>
+
+                </div>
+
+
+                <div class="system-row">
+
+                    <span>
+                        Server
+                    </span>
+
+                    <strong>
+                        Uvicorn
+                    </strong>
+
+                </div>
+
+
+                <div class="system-row">
+
+                    <span>
+                        API Status
+                    </span>
+
+                    <strong class="status-good">
+                        Available
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+
+<!-- =========================
+     BOTTOM NAVIGATION
+========================= -->
+
+<nav class="bottom-nav">
+
+
+    <button
+        class="nav-btn active"
+        id="dashboardNav"
+        onclick="showPage('dashboard')"
+    >
+        Dashboard
+    </button>
+
+
+    <button
+        class="nav-btn"
+        id="slotsNav"
+        onclick="showPage('slots')"
+    >
+        Parking Slots
+    </button>
+
+
+    <button
+        class="nav-btn"
+        id="analyticsNav"
+        onclick="showPage('analytics')"
+    >
+        Analytics
+    </button>
+
+
+    <button
+        class="nav-btn"
+        id="systemNav"
+        onclick="showPage('system')"
+    >
+        System
+    </button>
+
+
+</nav>
+
+
+
+<script>
+
+    /* =========================
+       GLOBAL DATA
+    ========================= */
+
+    let parkingData = null;
+
+
+    /* =========================
+       NAVIGATION
+    ========================= */
+
+    function hideAllPages() {
+
+        document
+            .getElementById("dashboardPage")
+            .classList.remove("active");
+
+        document
+            .getElementById("slotsPage")
+            .classList.remove("active");
+
+        document
+            .getElementById("analyticsPage")
+            .classList.remove("active");
+
+        document
+            .getElementById("systemPage")
+            .classList.remove("active");
+
+    }
+
+
+    function resetNavigation() {
+
+        document
+            .getElementById("dashboardNav")
+            .classList.remove("active");
+
+        document
+            .getElementById("slotsNav")
+            .classList.remove("active");
+
+        document
+            .getElementById("analyticsNav")
+            .classList.remove("active");
+
+        document
+            .getElementById("systemNav")
+            .classList.remove("active");
+
+    }
+
+
+    function showPage(page) {
+
+        hideAllPages();
+
+        resetNavigation();
+
+
+        if (page === "dashboard") {
+
+            document
+                .getElementById("dashboardPage")
+                .classList.add("active");
+
+            document
+                .getElementById("dashboardNav")
+                .classList.add("active");
+
+            loadParkingData();
+
+        }
+
+
+        else if (page === "slots") {
+
+            document
+                .getElementById("slotsPage")
+                .classList.add("active");
+
+            document
+                .getElementById("slotsNav")
+                .classList.add("active");
+
+            loadParkingSlots();
+
+        }
+
+
+        else if (page === "analytics") {
+
+            document
+                .getElementById("analyticsPage")
+                .classList.add("active");
+
+            document
+                .getElementById("analyticsNav")
+                .classList.add("active");
+
+            loadAnalytics();
+            setInterval(() => {
+    loadAnalytics();
+}, 2000);
+
+        }
+
+
+        else if (page === "system") {
+
+            document
+                .getElementById("systemPage")
+                .classList.add("active");
+
+            document
+                .getElementById("systemNav")
+                .classList.add("active");
+
+            loadSystemData();
+
+        }
+
+    }
+
+
+
+    /* =========================
+       LOAD PARKING DATA
+    ========================= */
+
+    async function loadParkingData() {
+
+        try {
+
+            const response =
+                await fetch("/video-parking-status")
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Unable to fetch parking data"
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            parkingData = data;
+
+
+            document
+                .getElementById("totalSpaces")
+                .textContent =
+                data.total;
+
+
+            document
+                .getElementById("availableSpaces")
+                .textContent =
+                data.available;
+
+
+            document
+                .getElementById("occupiedSpaces")
+                .textContent =
+                data.occupied;
+
+
+            document
+                .getElementById("occupancyPercentage")
+                .textContent =
+                data.occupancy + "%";
+
+
+            document
+                .getElementById("miniAvailable")
+                .textContent =
+                data.available;
+
+
+            document
+                .getElementById("miniOccupied")
+                .textContent =
+                data.occupied;
+
+
+            document
+                .getElementById("ringPercentage")
+                .textContent =
+                data.occupancy + "%";
+
+
+            updateOccupancyRing(
+                data.occupancy
+            );
+
+
+            document
+                .getElementById("lastUpdate")
+                .textContent =
+                "Updated: " +
+                new Date().toLocaleTimeString();
+
+
+            updateActivity(data);
+
+
+            document
+                .getElementById("systemTotalSpaces")
+                .textContent =
+                data.total;
+
+        }
+
+
+        catch (error) {
+
+    console.error(
+        "Dashboard update error:",
+        error
+    );
+
+    document
+        .getElementById("lastUpdate")
+        .textContent =
+        "Update unavailable";
+
+
+            document
+                .getElementById("activityList")
+                .innerHTML = `
+
+                    <div class="error-message">
+
+                        Unable to connect to
+                        ParkVision AI backend.
+
+                        <br><br>
+
+                        Make sure FastAPI is running.
+
+                    </div>
+
+                `;
+
+        }
+
+    }
+
+
+
+    /* =========================
+       ACTIVITY
+    ========================= */
+
+    function updateActivity(data) {
+
+    const activityList =
+        document.getElementById("activityList");
+
+    const currentTime =
+        new Date().toLocaleTimeString();
+
+    activityList.innerHTML = `
+        <div class="activity-item">
+
+            <div class="activity-icon occupied-icon">
+                🚗
+            </div>
+
+            <div class="activity-content">
+                <div class="activity-title">
+                    Parking Detection Updated
+                </div>
+
+                <div class="activity-description">
+                    ${data.occupied} parking spaces currently occupied
+                </div>
+            </div>
+
+            <div class="activity-time">
+                ${currentTime}
+            </div>
+
+        </div>
+
+
+        <div class="activity-item">
+
+            <div class="activity-icon available-icon">
+                ✓
+            </div>
+
+            <div class="activity-content">
+                <div class="activity-title">
+                    Spaces Available
+                </div>
+
+                <div class="activity-description">
+                    ${data.available} parking spaces available
+                </div>
+            </div>
+
+            <div class="activity-time">
+                ${currentTime}
+            </div>
+
+        </div>
+
+
+        <div class="activity-item">
+
+            <div class="activity-icon occupancy-icon">
+                %
+            </div>
+
+            <div class="activity-content">
+                <div class="activity-title">
+                    Occupancy Updated
+                </div>
+
+                <div class="activity-description">
+                    Current parking occupancy is ${data.occupancy}%
+                </div>
+            </div>
+
+            <div class="activity-time">
+                ${currentTime}
+            </div>
+
+        </div>
+    `;
+}
+
+
+
+    /* =========================
+       OCCUPANCY RING
+    ========================= */
+
+    function updateOccupancyRing(
+        percentage
+    ) {
+
+        const degrees =
+            (percentage / 100) * 360;
+
+
+        document
+            .getElementById("occupancyRing")
+            .style.background = `
+
+                conic-gradient(
+
+                    #00e5a0 0deg,
+
+                    #00e5a0 ${degrees}deg,
+
+                    #17252c ${degrees}deg,
+
+                    #17252c 360deg
+
+                )
+
+            `;
+
+    }
+
+
+
+    /* =========================
+       PARKING SLOTS
+    ========================= */
+
+    async function loadParkingSlots() {
+
+    const grid = document.getElementById("slotsGrid");
+
+    grid.innerHTML = `
+        <div class="loading">
+            Loading parking slots...
+        </div>
+    `;
+
+    try {
+
+        const response = await fetch(
+            "/video-parking-status"
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                "Unable to load parking slots"
+            );
+        }
+
+        const data = await response.json();
+
+        grid.innerHTML = "";
+
+        data.spaces.forEach((space) => {
+
+            const card = document.createElement("div");
+
+            const status =
+                space.status.toLowerCase();
+
+            card.className =
+                `slot-card ${status}`;
+
+            card.innerHTML = `
+                <div class="slot-number">
+                    ${space.id}
+                </div>
+
+                <div class="slot-icon">
+                    ${
+                        space.status === "Occupied"
+                            ? "🚗"
+                            : "✓"
+                    }
+                </div>
+
+                <div class="slot-status">
+                    ${space.status}
+                </div>
+            `;
+
+            grid.appendChild(card);
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Parking slots error:",
+            error
+        );
+
+        grid.innerHTML = `
+            <div class="loading">
+                Unable to load parking slots.
+            </div>
+        `;
+    }
+}
+
+
+
+    /* =========================
+       ANALYTICS
+    ========================= */
+
+    async function loadAnalytics() {
+
+    try {
+
+        const response = await fetch(
+            "/video-parking-status"
+        );
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to load analytics"
+            );
+
+        }
+
+        const data = await response.json();
+
+
+        // ------------------------------------------
+        // UPDATE ANALYTICS NUMBERS
+        // ------------------------------------------
+
+        document
+            .getElementById("analyticsOccupancy")
+            .textContent =
+            data.occupancy + "%";
+
+
+        document
+            .getElementById("analyticsAvailable")
+            .textContent =
+            data.available;
+
+
+        document
+            .getElementById("analyticsOccupied")
+            .textContent =
+            data.occupied;
+
+
+        document
+            .getElementById("analyticsTotal")
+            .textContent =
+            data.total;
+
+
+        // ------------------------------------------
+        // BAR CHART
+        // ------------------------------------------
+
+        const maxHeight = 220;
+
+
+        const occupiedHeight =
+            data.total > 0
+                ? (
+                    data.occupied /
+                    data.total
+                ) * maxHeight
+                : 0;
+
+
+        const availableHeight =
+            data.total > 0
+                ? (
+                    data.available /
+                    data.total
+                ) * maxHeight
+                : 0;
+
+
+        document
+            .getElementById("occupiedBar")
+            .style.height =
+            occupiedHeight + "px";
+
+
+        document
+            .getElementById("availableBar")
+            .style.height =
+            availableHeight + "px";
+
+
+        // ------------------------------------------
+        // CHART LABELS
+        // ------------------------------------------
+
+        document
+            .getElementById("occupiedChartValue")
+            .textContent =
+            data.occupied + " occupied";
+
+
+        document
+            .getElementById("availableChartValue")
+            .textContent =
+            data.available + " available";
+
+
+    } catch (error) {
+
+        console.error(
+            "Analytics error:",
+            error
+        );
+
+    }
+}
+
+
+
+    /* =========================
+       SYSTEM DATA
+    ========================= */
+
+   async function loadSystemData() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/video-parking-status"
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to load system data"
+            );
+
+        }
+
+        const data =
+            await response.json();
+
+        document
+            .getElementById(
+                "systemTotalSpaces"
+            )
+            .textContent =
+            data.total;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "System error:",
+            error
+        );
+
+    }
+
+}
+
+
+
+    /* =========================
+       IMAGE REFRESH
+    ========================= */
+
+    function refreshParkingImage() {
+
+        const image =
+            document.getElementById(
+                "parkingImage"
+            );
+
+
+        image.src =
+            "/parking-image?t=" +
+            Date.now();
+
+    }
+
+
+/* =========================
+   CAMERA MODE
+========================= */
+
+function showImageMode() {
+
+    const image =
+        document.getElementById("parkingImage");
+
+    const video =
+        document.getElementById("parkingVideo");
+
+    image.style.display = "block";
+    video.style.display = "none";
+
+    document.getElementById(
+        "imageModeButton"
+    ).style.background = "#00e5a0";
+
+    document.getElementById(
+        "imageModeButton"
+    ).style.color = "#071015";
+
+    document.getElementById(
+        "videoModeButton"
+    ).style.background = "#101d23";
+
+    document.getElementById(
+        "videoModeButton"
+    ).style.color = "#9aabb2";
+}
+
+
+function showVideoMode() {
+
+    const image =
+        document.getElementById("parkingImage");
+
+    const video =
+        document.getElementById("parkingVideo");
+
+    image.style.display = "none";
+    video.style.display = "block";
+
+    document.getElementById(
+        "videoModeButton"
+    ).style.background = "#00e5a0";
+
+    document.getElementById(
+        "videoModeButton"
+    ).style.color = "#071015";
+
+    document.getElementById(
+        "imageModeButton"
+    ).style.background = "#101d23";
+
+    document.getElementById(
+        "imageModeButton"
+    ).style.color = "#9aabb2";
+}
+    /* =========================
+       AUTO REFRESH
+    ========================= */
+
+    setInterval(
+    () => {
+
+        loadParkingData();
+
+        const video =
+            document.getElementById("parkingVideo");
+
+        if (
+            video &&
+            video.style.display === "none"
+        ) {
+            refreshParkingImage();
+        }
+
+    },
+    5000
+);
+setInterval(
+    () => {
+        loadParkingSlots();
+    },
+    5000
+);
+
+
+    /* =========================
+       INITIAL LOAD
+    ========================= */
+
+    loadParkingData();
+
+</script>
+
+</body>
+
+</html>
